@@ -8,3 +8,6 @@ VerifyMe
 *.pdb
 *.exe
 pkg
+deploy
+publish
+*.user

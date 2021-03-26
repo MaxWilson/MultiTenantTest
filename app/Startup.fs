@@ -18,7 +18,9 @@ type Startup(configuration: IConfiguration) =
     // This method gets called by the runtime. Use this method to add services to the container.
     member _.ConfigureServices(services: IServiceCollection) =
         // Add framework services.
-        services.AddControllers() |> ignore
+        services
+            //.AddAuthorization(fun op -> op.AddPolicy("Only specific clients", fun policy -> policy.))
+            .AddControllers() |> ignore
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     member _.Configure(app: IApplicationBuilder, env: IWebHostEnvironment) =
@@ -27,7 +29,7 @@ type Startup(configuration: IConfiguration) =
         app.UseHttpsRedirection()
            .UseRouting()
            .UseAuthorization()
-           .UseAuthentication()
+           //.UseAuthentication(fun op -> op.RequireAuthorization(
            .UseEndpoints(fun endpoints ->
                 endpoints.MapControllers() |> ignore
             ) |> ignore

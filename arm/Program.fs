@@ -3,18 +3,24 @@
 open System
 open Farmer
 open Farmer.Builders
+open Farmer.WebApp
 
-let helloWorld = functions {
-    name "helloWorld"
-    storage_account_name "helloWorldData"    
+let svc = webApp {
+    name "helloFarmer"
+    service_plan_name "helloFarmerPlan"
+    setting "myKey" "possibly unneeded?"
+    sku WebApp.Sku.B1
+    enable_cors WebApp.AllOrigins
+    zip_deploy @".\publish"
 }
 
-// Define a function to construct a message to print
-let from whom =
-    sprintf "from %s" whom
+let deployment = arm {
+    location Location.WestUS2
+    add_resource svc
+}
 
 [<EntryPoint>]
 let main argv =
-    let message = from "F#" // Call the function
-    printfn "Hello world %s" message
+    //deployment |> Writer.quickWrite "weather"
+    deployment |> Deploy.execute "helloFarmerRG" Deploy.NoParameters |> ignore
     0 // return an integer exit code
