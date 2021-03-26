@@ -1,0 +1,10 @@
+.*
+bin
+obj
+*.suo
+packages
+*.dll
+VerifyMe
+*.pdb
+*.exe
+pkg
