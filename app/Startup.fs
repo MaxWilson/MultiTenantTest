@@ -11,16 +11,21 @@ open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
+open Microsoft.AspNetCore.Authentication.JwtBearer
+open Microsoft.Identity.Web
 
 type Startup(configuration: IConfiguration) =
     member _.Configuration = configuration
 
     // This method gets called by the runtime. Use this method to add services to the container.
+    // see https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-v2-aspnet-core-web-api for more
     member _.ConfigureServices(services: IServiceCollection) =
+        let sch = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme
         // Add framework services.
         services
-            //.AddAuthorization(fun op -> op.AddPolicy("Only specific clients", fun policy -> policy.))
-            .AddControllers() |> ignore
+            .AddAuthentication(sch)
+            .Services.AddMicrosoftIdentityWebApiAuthentication(configuration)
+            .Services.AddControllers() |> ignore
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     member _.Configure(app: IApplicationBuilder, env: IWebHostEnvironment) =
@@ -28,7 +33,8 @@ type Startup(configuration: IConfiguration) =
             app.UseDeveloperExceptionPage() |> ignore
         app.UseHttpsRedirection()
            .UseRouting()
-           //.UseAuthorization()
+           .UseAuthentication()
+           .UseAuthorization()
            //.UseAuthentication(fun op -> op.RequireAuthorization(
            .UseEndpoints(fun endpoints ->
                 endpoints.MapControllers() |> ignore
