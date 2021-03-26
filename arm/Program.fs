@@ -12,6 +12,7 @@ let svc = webApp {
     sku WebApp.Sku.B1
     enable_cors WebApp.AllOrigins
     zip_deploy @".\publish"
+    system_identity
 }
 
 let deployment = arm {
