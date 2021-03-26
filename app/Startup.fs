@@ -28,7 +28,7 @@ type Startup(configuration: IConfiguration) =
             app.UseDeveloperExceptionPage() |> ignore
         app.UseHttpsRedirection()
            .UseRouting()
-           .UseAuthorization()
+           //.UseAuthorization()
            //.UseAuthentication(fun op -> op.RequireAuthorization(
            .UseEndpoints(fun endpoints ->
                 endpoints.MapControllers() |> ignore

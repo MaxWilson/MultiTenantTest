@@ -8,7 +8,6 @@ open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
 open app
 open System.Net
-open Microsoft.AspNetCore.Authorization
 
 [<ApiController>]
 [<Route("[controller]")>]
@@ -30,7 +29,6 @@ type WeatherForecastController (logger : ILogger<WeatherForecastController>) =
         |]
 
     [<HttpGet>]
-    [<Authorize>]
     member _.Get() =
         let rng = System.Random()
         [|
