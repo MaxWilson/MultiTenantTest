@@ -29,3 +29,4 @@ let showResponse (msg: HttpResponseMessage) =
 http.GetAsync("https://localhost:44336/weatherforecast/who").Result |> showResponse
 
 // see https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/Client-credential-flows
+// I am not sure why the server isn't recognizing the token though.
