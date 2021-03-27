@@ -37,3 +37,14 @@ type WeatherForecastController (logger : ILogger<WeatherForecastController>) =
                   TemperatureC = rng.Next(-20,55)
                   Summary = summaries.[rng.Next(summaries.Length)] }
         |]
+    [<HttpGet>]
+    [<Route("Who")>]
+    member this.Who() =
+        {|
+            user = this.User.Identities
+            claims =
+                match this.User.Identity with
+                    | :? System.Security.Claims.ClaimsIdentity as id ->
+                        id.Claims
+                    | _ -> null
+        |}

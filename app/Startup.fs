@@ -20,10 +20,9 @@ type Startup(configuration: IConfiguration) =
     // This method gets called by the runtime. Use this method to add services to the container.
     // see https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-v2-aspnet-core-web-api for more
     member _.ConfigureServices(services: IServiceCollection) =
-        let sch = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme
         // Add framework services.
         services
-            .AddAuthentication(sch)
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .Services.AddMicrosoftIdentityWebApiAuthentication(configuration)
             .Services.AddControllers() |> ignore
 
