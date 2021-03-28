@@ -22,10 +22,10 @@ let client =
 let token = client.AcquireTokenForClient(["https://wilsonsoft.onmicrosoft.com/HelloWeather/.default"]).ExecuteAsync().Result.AccessToken
 
 let http = new HttpClient()
-http.DefaultRequestHeaders.Authorization <- Headers.AuthenticationHeaderValue("bearer", token)
 let showResponse (msg: HttpResponseMessage) =
     printfn "Response: %A" msg
     msg.Content.ReadAsStringAsync().Result |> printfn "%s"
+http.DefaultRequestHeaders.Authorization <- Headers.AuthenticationHeaderValue("bearer", token)
 http.GetAsync("https://localhost:44336/weatherforecast/who").Result |> showResponse
 
 // see https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/Client-credential-flows
