@@ -40,11 +40,15 @@ type WeatherForecastController (logger : ILogger<WeatherForecastController>) =
     [<HttpGet>]
     [<Route("Who")>]
     member this.Who() =
-        {|
-            user = this.User.Identities
-            claims =
-                match this.User.Identity with
-                    | :? System.Security.Claims.ClaimsIdentity as id ->
-                        id.Claims
-                    | _ -> null
-        |}
+        if this.User.Identity.IsAuthenticated |> not then
+            this.Unauthorized() :> ActionResult
+        else
+            this.Ok(
+                {|
+                    user = this.User.Identities
+                    claims =
+                        match this.User.Identity with
+                            | :? System.Security.Claims.ClaimsIdentity as id ->
+                                id.Claims
+                            | _ -> null
+                |}) :> ActionResult

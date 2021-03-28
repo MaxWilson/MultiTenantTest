@@ -19,7 +19,7 @@ let client =
     let options = ConfidentialClientApplicationOptions(TenantId=clientTenantId, ClientId=clientId, ClientSecret=clientSecret)
     ConfidentialClientApplicationBuilder.CreateWithApplicationOptions(options)
         .Build()
-let token = client.AcquireTokenForClient(["https://wilsonsoft.onmicrosoft.com/HelloWeather/.default"]).ExecuteAsync().Result.AccessToken
+let token = client.AcquireTokenForClient(["https://wilsonsoft.onmicrosoft.com/HelloWeather/"]).ExecuteAsync().Result.AccessToken
 
 let http = new HttpClient()
 http.DefaultRequestHeaders.Authorization <- Headers.AuthenticationHeaderValue("bearer", token)
