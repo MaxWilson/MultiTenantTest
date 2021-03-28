@@ -23,7 +23,10 @@ type Startup(configuration: IConfiguration) =
         // Add framework services.
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .Services.AddMicrosoftIdentityWebApiAuthentication(configuration)
+            .AddJwtBearer(fun o ->
+                o.Audience <- "https://wilsonsoft.onmicrosoft.com/HelloWeather/.default"
+                )
+            //.Services.AddMicrosoftIdentityWebApiAuthentication(configuration)
             .Services.AddControllers() |> ignore
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
