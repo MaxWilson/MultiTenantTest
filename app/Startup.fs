@@ -24,7 +24,7 @@ type Startup(configuration: IConfiguration) =
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(fun o ->
-                o.Audience <- "https://wilsonsoft.onmicrosoft.com/HelloWeather/.default"
+                o.Audience <- "https://wilsonsoft.onmicrosoft.com/HelloWeather/"
                 )
             //.Services.AddMicrosoftIdentityWebApiAuthentication(configuration)
             .Services.AddControllers() |> ignore

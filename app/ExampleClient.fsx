@@ -19,7 +19,7 @@ let client =
     let options = ConfidentialClientApplicationOptions(TenantId=clientTenantId, ClientId=clientId, ClientSecret=clientSecret)
     ConfidentialClientApplicationBuilder.CreateWithApplicationOptions(options)
         .Build()
-let token = client.AcquireTokenForClient(["https://wilsonsoft.onmicrosoft.com/HelloWeather/"]).ExecuteAsync().Result.AccessToken
+let token = client.AcquireTokenForClient(["https://wilsonsoft.onmicrosoft.com/HelloWeather/.default"]).ExecuteAsync().Result.AccessToken
 
 let http = new HttpClient()
 http.DefaultRequestHeaders.Authorization <- Headers.AuthenticationHeaderValue("bearer", token)
@@ -30,3 +30,18 @@ http.GetAsync("https://localhost:44336/weatherforecast/who").Result |> showRespo
 
 // see https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/Client-credential-flows
 // I am not sure why the server isn't recognizing the token though.
+
+// make sure it isn't a multi-tenant issue by testing with a client from inside the WilsonSoft tenant
+let localClientId = "76997913-922d-47e2-9ffa-c9e23802b56e" // MultiTenantTest
+let localTenantId = "c4568757-6752-4ed0-a24a-b5ab2df02011" // WilsonSoft tenant
+let localClientSecret = "<redacted>"
+
+let cred2 = new ClientCertificateCredential(clientTenantId, clientId, clientSecret)
+let client2 =
+    let options = ConfidentialClientApplicationOptions(TenantId=localTenantId, ClientId=localClientId, ClientSecret=localClientSecret)
+    ConfidentialClientApplicationBuilder.CreateWithApplicationOptions(options)
+        .Build()
+let token2 = client.AcquireTokenForClient(["https://wilsonsoft.onmicrosoft.com/HelloWeather/.default"]).ExecuteAsync().Result.AccessToken
+
+http.DefaultRequestHeaders.Authorization <- Headers.AuthenticationHeaderValue("bearer", token2)
+http.GetAsync("https://localhost:44336/weatherforecast/who").Result |> showResponse
