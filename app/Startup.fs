@@ -13,6 +13,7 @@ open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Microsoft.AspNetCore.Authentication.JwtBearer
 open Microsoft.Identity.Web
+open Microsoft.IdentityModel.Logging
 
 type Startup(configuration: IConfiguration) =
     member _.Configuration = configuration
@@ -20,12 +21,16 @@ type Startup(configuration: IConfiguration) =
     // This method gets called by the runtime. Use this method to add services to the container.
     // see https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-v2-aspnet-core-web-api for more
     member _.ConfigureServices(services: IServiceCollection) =
+        IdentityModelEventSource.ShowPII <- true
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(fun o ->
 
                 configuration.Bind(o)
                 o.TokenValidationParameters <- new Microsoft.IdentityModel.Tokens.TokenValidationParameters(ValidateAudience=true)
+                o.Authority <- "https://login.microsoftonline.com/common"
+                o.Audience <- "https://wilsonsoft.onmicrosoft.com/HelloWeather"
+                o.TokenValidationParameters.IssuerValidator <- fun i -> true
                 )
             .Services.AddControllers() |> ignore
 
