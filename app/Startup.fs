@@ -14,6 +14,7 @@ open Microsoft.Extensions.Hosting
 open Microsoft.AspNetCore.Authentication.JwtBearer
 open Microsoft.Identity.Web
 open Microsoft.IdentityModel.Logging
+open Microsoft.IdentityModel.Tokens
 
 type Startup(configuration: IConfiguration) =
     member _.Configuration = configuration
@@ -27,10 +28,10 @@ type Startup(configuration: IConfiguration) =
             .AddJwtBearer(fun o ->
 
                 configuration.Bind(o)
-                o.TokenValidationParameters <- new Microsoft.IdentityModel.Tokens.TokenValidationParameters(ValidateAudience=true)
+                o.TokenValidationParameters <- new Microsoft.IdentityModel.Tokens.TokenValidationParameters(ValidateAudience=true, ValidateIssuer=true)
                 o.Authority <- "https://login.microsoftonline.com/common"
                 o.Audience <- "https://wilsonsoft.onmicrosoft.com/HelloWeather"
-                o.TokenValidationParameters.IssuerValidator <- fun i -> true
+                o.TokenValidationParameters.IssuerValidator <- fun issue securityToken _params -> issue
                 )
             .Services.AddControllers() |> ignore
 
@@ -42,7 +43,6 @@ type Startup(configuration: IConfiguration) =
            .UseRouting()
            .UseAuthentication()
            .UseAuthorization()
-           //.UseAuthentication(fun op -> op.RequireAuthorization(
            .UseEndpoints(fun endpoints ->
                 endpoints.MapControllers() |> ignore
             ) |> ignore

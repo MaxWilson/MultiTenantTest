@@ -44,10 +44,11 @@ type WeatherForecastController (logger : ILogger<WeatherForecastController>) =
     member this.Who() =
         this.Ok(
             {|
-                user = this.User.Identities
-                claims =
-                    match this.User.Identity with
-                        | :? System.Security.Claims.ClaimsIdentity as id ->
-                            id.Claims
-                        | _ -> null
+                msg = "Yes!"
+                //user = this.User.Identities
+                //claims =
+                //    match this.User.Identity with
+                //        | :? System.Security.Claims.ClaimsIdentity as id ->
+                //            id.Claims |> Seq.map(fun c -> c.Type, c.Value)
+                //        | _ -> null
             |})
