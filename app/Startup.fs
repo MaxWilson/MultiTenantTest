@@ -20,13 +20,13 @@ type Startup(configuration: IConfiguration) =
     // This method gets called by the runtime. Use this method to add services to the container.
     // see https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-v2-aspnet-core-web-api for more
     member _.ConfigureServices(services: IServiceCollection) =
-        // Add framework services.
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(fun o ->
-                o.Audience <- "https://wilsonsoft.onmicrosoft.com/HelloWeather/"
+
+                configuration.Bind(o)
+                o.TokenValidationParameters <- new Microsoft.IdentityModel.Tokens.TokenValidationParameters(ValidateAudience=true)
                 )
-            //.Services.AddMicrosoftIdentityWebApiAuthentication(configuration)
             .Services.AddControllers() |> ignore
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
