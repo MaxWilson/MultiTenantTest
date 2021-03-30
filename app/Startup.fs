@@ -26,15 +26,15 @@ type Startup(configuration: IConfiguration) =
         IdentityModelEventSource.ShowPII <- true
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(fun o ->
-                o.TokenValidationParameters <-
+            .AddJwtBearer(fun jwtOptions ->
+                jwtOptions.TokenValidationParameters <-
                     new Microsoft.IdentityModel.Tokens.TokenValidationParameters(
                         ValidateAudience = true,
                         ValidateIssuer = true
                         )
-                o.Authority <- "https://login.microsoftonline.com/common"
-                o.Audience <- "https://wilsonsoft.onmicrosoft.com/HelloWeather"
-                o.TokenValidationParameters.IssuerValidator <-
+                jwtOptions.Authority <- "https://login.microsoftonline.com/common"
+                jwtOptions.Audience <- "https://wilsonsoft.onmicrosoft.com/HelloWeather"
+                jwtOptions.TokenValidationParameters.IssuerValidator <-
                     fun issuer jwt tokenValidationParams ->
                         // In order to support multi-tenant auth, replace {tenantid} placeholder with actual tenantId,
                         // e.g. "https://sts.windows.net/{tenantid}/" becomes "https://sts.windows.net/{c4568757-6752-4ed0-a24a-b5ab2df02011}/"
@@ -58,7 +58,19 @@ type Startup(configuration: IConfiguration) =
                             |> SecurityTokenInvalidIssuerException
                             |> raise
                 )
-            .Services.AddControllers() |> ignore
+            .Services.AddAuthorization(fun authzOptions ->
+                // only allow specific appIds (from trusted issuers) access to this app
+                authzOptions.AddPolicy(
+                    "ACL",
+                    (fun policy ->
+                        policy.RequireAssertion(fun ctx ->
+                            ctx.User.HasClaim(fun claim ->
+                                claim.Type = "appid" && claim.Value = "083d3ba2-ed4e-4e11-b7ef-d8cc46ffe346")
+                            )
+                        |> ignore
+                    ))
+                )
+            .AddControllers() |> ignore
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     member _.Configure(app: IApplicationBuilder, env: IWebHostEnvironment) =

@@ -40,6 +40,7 @@ type WeatherForecastController (logger : ILogger<WeatherForecastController>) =
         |]
     [<HttpGet>]
     [<Route("Who")>]
+    [<Authorize(Policy="ACL")>]
     member this.Who() =
         this.Ok(
             {|
