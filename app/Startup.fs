@@ -65,7 +65,10 @@ type Startup(configuration: IConfiguration) =
                     (fun policy ->
                         policy.RequireAssertion(fun ctx ->
                             ctx.User.HasClaim(fun claim ->
-                                claim.Type = "appid" && claim.Value = "083d3ba2-ed4e-4e11-b7ef-d8cc46ffe346")
+                                claim.Type = "appid" && claim.Value = "083d3ba2-ed4e-4e11-b7ef-d8cc46ffe346") // appId
+                            &&
+                            ctx.User.HasClaim(fun claim ->
+                                claim.Type = "iss" && claim.Value = "https://sts.windows.net/4510468d-3790-4a1a-8209-84281b2d1596/") // tenant-of-origin
                             )
                         |> ignore
                     ))
